@@ -1,4 +1,5 @@
 # OOP_Project
-eughrseiu gherguh
-#TEST
-allons enfants
+TODO LIST FOR PASCAL:
+-STEP FUNCTION
+-A PROPER README
+-LEARN HOW TO USE GIT BASH
