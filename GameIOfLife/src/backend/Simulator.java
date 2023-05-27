@@ -20,8 +20,8 @@ public class Simulator extends Thread {
 	private boolean pauseFlag;
 	private int loopDelay;
 	private boolean loopingState;
-	private ArrayList<ArrayList<Integer>> mainGrid = new ArrayList<ArrayList<Integer>>();
-	private ArrayList<ArrayList<Integer>> nextGrid = new ArrayList<ArrayList<Integer>>();
+	private int[][] mainGrid = new int[100][100];
+	private int[][] nextGrid = new int[getWidth()][getHeight()];
 	//TODO : add declaration of additional attributes here
 
 	public Simulator(MyInterface mjfParam) {
@@ -40,7 +40,7 @@ public class Simulator extends Thread {
 	 */
 	public int getWidth() {
 		//TODO : correct return
-		return mainGrid.size();
+		return mainGrid.length;
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class Simulator extends Thread {
 	 */
 	public int getHeight() {
 		//TODO : correct return
-		return mainGrid.get(0).size();
+		return mainGrid[0].length;
 	}
 	
 	//dont touch this -----------------
@@ -97,84 +97,54 @@ public class Simulator extends Thread {
 		 * be it as variables or as attributes you may add to the class Simulator,
 		 * by using their (public) methods.
 		 */
-		
 		//basically make the neighbor cell thingy
-		int aliveCount=0;
-		for (int i = 0; i < getWidth(); i++) {
-			for (int j = 0; j < getHeight();j++) {
-				for(int k=-1;k)
-					if (loopingState == true) {
-						if(getCell(getWidth(),j)==1) {
-							aliveCount=+1;
-							}
-						}
-					if (getCell(i+1,j)==1){
-						aliveCount=+1;
-					}
-				}
-				else if(i+1>getWidth()) {
-					if (loopingState == true) {
-						if(getCell(0,j)==1) {
-							aliveCount=+1;
-						}
-					}
-					if (getCell(i-1,j)==1){
-						aliveCount=+1;	
-					}
-				}
-				else {
-					if (getCell(i-1,j)==1){
-						aliveCount=+1;	
-					}
-					if (getCell(i+1,j)==1){
-						aliveCount=+1;
-					}					
-				}
-				if(j-1 <0) {
-					if (loopingState == true) {
-						if(getCell(i,getHeight())==1) {
-							aliveCount=+1;
-							}
-						}
-					if (getCell(i,j+1)==1){
-						aliveCount=+1;
-					}
-				}
-				else if(j+1>getHeight()) {
-					if (loopingState == true) {
-						if(getCell(i,0)==1) {
-							aliveCount=+1;
-						}
-					}
-					if (getCell(i,j-1)==1){
-						aliveCount=+1;	
-					}
-				}
-				else {
-					if (getCell(i,j-1)==1){
-						aliveCount=+1;	
-					}
-					if (getCell(i,j+1)==1){
-						aliveCount=+1;
-					}					
-				}
-				
-				//EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEe
-				if(getCell(i,j)==0) {
+		
+		for (int i = 0; i < getWidth()-1; i++) { // X axis grid loop
+			for (int j = 0; j < getHeight()-1;j++) { //Y axis grid loop
+				int aliveCount=0;
+				for(int k=-1;k<1;k++) { //horizontal check loop
+					for(int l=-1;l<1;l++) { //vertical check loop
+						int newX=i+k;
+						int newY=j+l;
 					
+						if(k!=0 && l!=0) {
+							if(loopingState==true) {
+								if(i+k<0) {
+									newX=getWidth()-1;
+								}
+								else if(i+k==getWidth()) {
+									newX=0;
+								}
+								if(j+l<0) {
+									newY=getHeight()-1;
+								}
+								else if(j+l==getHeight()) {
+									newY=0;
+								}
+								if(getCell(newX,newY)==1) {
+									aliveCount=+1;
+								}
+							}else {
+								if(i+k>=0 && i+k<getWidth() && j+l>=0 && j+l<getHeight()) {
+									if(getCell(newX,newY)==1) {
+										aliveCount=+1;
+									}
+								}
+							}
+						}
+					}
 				}
-				else {
-					if (aliveCount<2 || aliveCount>3){
-						setCell(i,j,0);
-					}
-					else if(aliveCount) {
-						
-					}
+				//EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+		
+				if (aliveCount<2 || aliveCount>3){
+					setNextCell(i,j,0);
+				}
+				else if(aliveCount==3) {
+					setNextCell(i,j,1);
 				}
 			}
 		}
-		
-		
+		mainGrid=nextGrid;
 	}
 
 	/**
@@ -210,11 +180,11 @@ public class Simulator extends Thread {
 		 * But the GUI can also print properly more values than that.
 		 * You might want to use this for the going further section.
 		 */
-		if (mainGrid.get(x).get(y)==1) {
-			mainGrid.get(x).set(y,0);
+		if (mainGrid[x][y]==1) {
+			mainGrid[x][y]=0;
 		}
 		else {
-			mainGrid.get(x).set(y,1);
+			mainGrid[x][y]=1;
 		}
 	}
 	/**
@@ -225,7 +195,7 @@ public class Simulator extends Thread {
 	 */
 	public int getCell(int x, int y) {
 		//TODO implement proper return
-		return mainGrid.get(x).get(y);
+		return mainGrid[x][y];
 	}
 
 	/**
@@ -236,7 +206,11 @@ public class Simulator extends Thread {
 	 */
 	public void setCell(int x, int y, int val) {
 		//TODO implement
-		mainGrid.get(x).set(y,val);
+		mainGrid[x][y]=val;
+	}
+	public void setNextCell(int x, int y, int val) {
+		//set cell of next grid
+		nextGrid[x][y]=val;
 	}
 
 	/**
@@ -246,7 +220,16 @@ public class Simulator extends Thread {
 	 */
 	public String[] getFileRepresentation() {
 		//TODO : implement
-		return new String[0];
+		String placeholder = new String();
+		String[] output= new String[getWidth()-1];
+		for(int i=0;i==getWidth();i++) {
+			placeholder ="";
+			for(int j=0;j==getHeight();j++) {
+				placeholder =+ mainGrid[i][j]+";";
+			}
+			output[i]=placeholder;
+		}
+		return output;
 	}
 	/**
 	 * Populates a [row/column] indicated by the given coordinate
@@ -258,7 +241,10 @@ public class Simulator extends Thread {
 	public void populateLine(int coord, String fileLine) {
 		//TODO : implement and correct the comment
 		// As you have to choose row OR column depending on your implementation
-		
+		String placeholder = fileLine.replace(";","");
+		for(int i=0;i<placeholder.length();i++) {
+			mainGrid[i][coord]=Character.getNumericValue(placeholder.charAt(2));
+		}	
 	}
 	
 	/**
@@ -275,7 +261,7 @@ public class Simulator extends Thread {
 				int myRandInt = randI.nextInt(100);
 		        myRandInt = myRandInt+1;
 				if(myRandInt>=chanceOfLife){
-					mainGrid.get(i).set(j,1);
+					mainGrid[i][j]=1;
 				}
 			}
 		}
