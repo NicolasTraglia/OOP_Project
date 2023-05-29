@@ -109,13 +109,14 @@ public class Simulator extends Thread {
 				}else if(aliveCount==3) {
 					setNextCell(i,j,1);
 				}else if(aliveCount==2) {
-					setNextCell(i,j,getCell(i,j));
+					if(getCell(i,j)==1) {
+						setNextCell(i,j,1);
+					}
 				}
 			}
 		}
 		mainGrid=nextGrid;
 	}
-	
 	/**
 	 * Check how many neighboring cells are alive, returns int aliveCellCount.
 	 */
@@ -154,9 +155,15 @@ public class Simulator extends Thread {
 				}
 			}
 		}
+		/*
+		 * For debugging purposes, change value to true or false.
+		 */
+		if (aliveCount!=0 && false) {
+			System.out.println(aliveCount+" x="+i+" y="+j);
+		}
+		
 		return aliveCount;
 	}
-	
 	
 	/**
 	 * Stops simulation by raising the stop flag used in the run method
@@ -191,6 +198,9 @@ public class Simulator extends Thread {
 		 * But the GUI can also print properly more values than that.
 		 * You might want to use this for the going further section.
 		 */
+		if(false) { //For debugging purposes. true or false.
+			System.out.println("Cell toggled at x="+x+", y= "+y);
+		}
 		if (mainGrid[x][y]==1) {
 			mainGrid[x][y]=0;
 		}
