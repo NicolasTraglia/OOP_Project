@@ -24,7 +24,6 @@ public class Simulator extends Thread {
 	private int loopDelay;
 	private boolean loopingState;
 	private int[][] mainGrid = new int[100][100];
-	private int[][] nextGrid = new int[getWidth()][getHeight()];
 	//TODO : add declaration of additional attributes here
 
 	public Simulator(MyInterface mjfParam) {
@@ -91,8 +90,7 @@ public class Simulator extends Thread {
 	 * Individual step of the Simulation, modifying the world from
 	 * its state at time t to its state at time t+1
 	 */
-	public void makeStep() {
-		//TODO : fill in for Simulator behavior.
+	//TODO : fill in for Simulator behavior.
 		/*
 		 * Do not Hesitate to write other (private) methods in this class 
 		 * to use them here,
@@ -100,6 +98,8 @@ public class Simulator extends Thread {
 		 * be it as variables or as attributes you may add to the class Simulator,
 		 * by using their (public) methods.
 		 */
+	/**
+	public void makeStep() {
 		
 		for (int i = 0; i < getWidth(); i++) { // X axis grid loop
 			for (int j = 0; j < getHeight();j++) { //Y axis grid loop
@@ -117,53 +117,60 @@ public class Simulator extends Thread {
 		}
 		mainGrid=nextGrid;
 	}
-	/**
-	 * Check how many neighboring cells are alive, returns int aliveCellCount.
-	 */
-	private int checkAliveCells(int i, int j) { //i = x, i = y
-		int aliveCount=0;
-		for(int k=-1;k<2;k++) { //horizontal check loop
-			for(int l=-1;l<2;l++) { //vertical check loop
-				int newX=i+k;
-				int newY=j+l;
-			
-				if(k!=0 || l!=0) {
-					if(loopingState==true) {
-						if(i+k<0) {
-							newX=getWidth()-1;
+	**/
+
+	public void makeStep(){
+		int[][] newBoard = new int[getWidth()][getHeight()];
+		for (int i=0; i<getWidth();i++){
+		for (int j=0;j<getHeight();j++){
+		int count = count_Cell_Alive(i, j);
+		if (count == 2){
+		newBoard[i][j] = getCell(i, j);
+		} else if (count==3) {
+		newBoard[i][j] = 1;
+		} 
+		}
+		}
+		mainGrid = newBoard;
+		}
+
+		private int count_Cell_Alive(int x, int y){
+			int count = 0; //number of alive cells detected
+			for (int i=x-1; i<=x+1; i++){ //x grid loop
+				for (int j=y-1; j<=y+1; j++){ //y grid loop
+					if (i!=x || j!=y){
+						
+						if(loopingState) {
+							int nI=i;
+							int nJ=j;
+							if(i<0) {
+								nI=getWidth()-1;
+							}
+							else if(i>=getWidth()) {
+								nI=0;
+							}
+							if(j<0) {
+								nJ=getHeight()-1;
+							}
+							else if(j>=getHeight()) {
+								nJ=0;
+							}
+							
+							if(getCell(nI,nJ)==1) {
+								count+=1;
+							}
 						}
-						else if(i+k==getWidth()) {
-							newX=0;
-						}
-						if(j+l<0) {
-							newY=getHeight()-1;
-						}
-						else if(j+l==getHeight()) {
-							newY=0;
-						}
-						if(getCell(newX,newY)==1) {
-							aliveCount+=1;
-						}
-					}
-					else {
-						if(i+k>=0 && i+k<getWidth() && j+l>=0 && j+l<getHeight()) {
-							if(getCell(newX,newY)==1) {
-								aliveCount+=1;
+						
+						else if (i>=0 && j>=0 && i<getWidth() && j<getHeight()) { //if not a bound
+							if (getCell(i, j) !=0) {
+							count++;
 							}
 						}
 					}
 				}
 			}
+			return count;
 		}
-		/*
-		 * For debugging purposes, change value to true or false.
-		 */
-		if (aliveCount!=0 && false) {
-			System.out.println(aliveCount+" x="+i+" y="+j);
-		}
-		
-		return aliveCount;
-	}
 	
 	/**
 	 * Stops simulation by raising the stop flag used in the run method
@@ -198,7 +205,7 @@ public class Simulator extends Thread {
 		 * But the GUI can also print properly more values than that.
 		 * You might want to use this for the going further section.
 		 */
-		if(false) { //For debugging purposes. true or false.
+		if(true) { //For debugging purposes. true or false.
 			System.out.println("Cell toggled at x="+x+", y= "+y);
 		}
 		if (mainGrid[x][y]==1) {
@@ -228,10 +235,6 @@ public class Simulator extends Thread {
 	public void setCell(int x, int y, int val) {
 		//TODO implement
 		mainGrid[x][y]=val;
-	}
-	public void setNextCell(int x, int y, int val) {
-		//set cell of next grid
-		nextGrid[x][y]=val;
 	}
 
 	/**
@@ -263,9 +266,11 @@ public class Simulator extends Thread {
 		//TODO : implement and correct the comment
 		// As you have to choose row OR column depending on your implementation
 		String placeholder = fileLine.replace(";","");
-		for(int i=0;i<placeholder.length();i++) {
-			mainGrid[i][coord]=Character.getNumericValue(placeholder.charAt(2));
-		}	
+		if(coord<getHeight()) {
+			for(int i=0;i<getWidth();i++){
+				mainGrid[i][coord]=Character.getNumericValue(placeholder.charAt(i));
+			}
+		}
 	}
 	
 	/**
