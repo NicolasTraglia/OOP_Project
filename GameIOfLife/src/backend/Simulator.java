@@ -3,7 +3,10 @@ import windowInterface.MyInterface;
 import java.util.ArrayList;
 import java.util.Random;
 import java.lang.Math;
-//TODO : add imports you will need here
+//TODO :
+// FIX ISSUE WITH STEP METHOD
+// currently, the step method works but doesnt detect correctly some cells for unknown reasons.
+//
 /*
  *  Note : if you use an import in another class you will need to add
  *  the import lines on top of the file of the other class.
@@ -97,56 +100,64 @@ public class Simulator extends Thread {
 		 * be it as variables or as attributes you may add to the class Simulator,
 		 * by using their (public) methods.
 		 */
-		//basically make the neighbor cell thingy
 		
-		for (int i = 0; i < getWidth()-1; i++) { // X axis grid loop
-			for (int j = 0; j < getHeight()-1;j++) { //Y axis grid loop
-				int aliveCount=0;
-				for(int k=-1;k<1;k++) { //horizontal check loop
-					for(int l=-1;l<1;l++) { //vertical check loop
-						int newX=i+k;
-						int newY=j+l;
-					
-						if(k!=0 && l!=0) {
-							if(loopingState==true) {
-								if(i+k<0) {
-									newX=getWidth()-1;
-								}
-								else if(i+k==getWidth()) {
-									newX=0;
-								}
-								if(j+l<0) {
-									newY=getHeight()-1;
-								}
-								else if(j+l==getHeight()) {
-									newY=0;
-								}
-								if(getCell(newX,newY)==1) {
-									aliveCount=+1;
-								}
-							}else {
-								if(i+k>=0 && i+k<getWidth() && j+l>=0 && j+l<getHeight()) {
-									if(getCell(newX,newY)==1) {
-										aliveCount=+1;
-									}
-								}
-							}
-						}
-					}
-				}
-				//EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-		
+		for (int i = 0; i < getWidth(); i++) { // X axis grid loop
+			for (int j = 0; j < getHeight();j++) { //Y axis grid loop
+				int aliveCount=checkAliveCells(i,j);
 				if (aliveCount<2 || aliveCount>3){
 					setNextCell(i,j,0);
-				}
-				else if(aliveCount==3) {
+				}else if(aliveCount==3) {
 					setNextCell(i,j,1);
+				}else if(aliveCount==2) {
+					setNextCell(i,j,getCell(i,j));
 				}
 			}
 		}
 		mainGrid=nextGrid;
 	}
-
+	
+	/**
+	 * Check how many neighboring cells are alive, returns int aliveCellCount.
+	 */
+	private int checkAliveCells(int i, int j) { //i = x, i = y
+		int aliveCount=0;
+		for(int k=-1;k<2;k++) { //horizontal check loop
+			for(int l=-1;l<2;l++) { //vertical check loop
+				int newX=i+k;
+				int newY=j+l;
+			
+				if(k!=0 || l!=0) {
+					if(loopingState==true) {
+						if(i+k<0) {
+							newX=getWidth()-1;
+						}
+						else if(i+k==getWidth()) {
+							newX=0;
+						}
+						if(j+l<0) {
+							newY=getHeight()-1;
+						}
+						else if(j+l==getHeight()) {
+							newY=0;
+						}
+						if(getCell(newX,newY)==1) {
+							aliveCount+=1;
+						}
+					}
+					else {
+						if(i+k>=0 && i+k<getWidth() && j+l>=0 && j+l<getHeight()) {
+							if(getCell(newX,newY)==1) {
+								aliveCount+=1;
+							}
+						}
+					}
+				}
+			}
+		}
+		return aliveCount;
+	}
+	
+	
 	/**
 	 * Stops simulation by raising the stop flag used in the run method
 	 */
@@ -225,7 +236,7 @@ public class Simulator extends Thread {
 		for(int i=0;i==getWidth();i++) {
 			placeholder ="";
 			for(int j=0;j==getHeight();j++) {
-				placeholder =+ mainGrid[i][j]+";";
+				placeholder += mainGrid[i][j]+";";
 			}
 			output[i]=placeholder;
 		}
@@ -291,5 +302,6 @@ public class Simulator extends Thread {
 	 */
 	public void setLoopDelay(int delay) {
 		//TODO : implement
+		loopDelay =delay;
 	}
 }
