@@ -254,10 +254,9 @@ public class Simulator extends Thread {
 	public void generateRandom(float chanceOfLife) {
 		//TODO implement
 		for (int i = 0; i < getWidth(); i++) {
-			for (int j = 0; i < getHeight();j++) {
+			for (int j = 0; j < getHeight();j++) {
 				Random randI = new Random();
-				int myRandInt = randI.nextInt(100);
-		        myRandInt = myRandInt+1;
+				float myRandInt = randI.nextFloat();
 				if(myRandInt>=chanceOfLife){
 					mainGrid[i][j]=1;
 				}
