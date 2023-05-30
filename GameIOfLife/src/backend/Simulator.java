@@ -85,39 +85,6 @@ public class Simulator extends Thread {
 
 	}
 	//dont touch this -----------------
-	
-	/**
-	 * Individual step of the Simulation, modifying the world from
-	 * its state at time t to its state at time t+1
-	 */
-	//TODO : fill in for Simulator behavior.
-		/*
-		 * Do not Hesitate to write other (private) methods in this class 
-		 * to use them here,
-		 * or other classes from which you might use instances here, 
-		 * be it as variables or as attributes you may add to the class Simulator,
-		 * by using their (public) methods.
-		 */
-	/**
-	public void makeStep() {
-		
-		for (int i = 0; i < getWidth(); i++) { // X axis grid loop
-			for (int j = 0; j < getHeight();j++) { //Y axis grid loop
-				int aliveCount=checkAliveCells(i,j);
-				if (aliveCount<2 || aliveCount>3){
-					setNextCell(i,j,0);
-				}else if(aliveCount==3) {
-					setNextCell(i,j,1);
-				}else if(aliveCount==2) {
-					if(getCell(i,j)==1) {
-						setNextCell(i,j,1);
-					}
-				}
-			}
-		}
-		mainGrid=nextGrid;
-	}
-	**/
 
 	public void makeStep(){
 		int[][] newBoard = new int[getWidth()][getHeight()];
@@ -133,7 +100,11 @@ public class Simulator extends Thread {
 		}
 		mainGrid = newBoard;
 		}
-
+		/*
+		*Counts the number of alive cells neighboring the cell located in (x, y)
+		*@param x coordinate x horizontal (int)
+		*@param y coordinate y vertical (int)
+		*/
 		private int count_Cell_Alive(int x, int y){
 			int count = 0; //number of alive cells detected
 			for (int i=x-1; i<=x+1; i++){ //x grid loop
