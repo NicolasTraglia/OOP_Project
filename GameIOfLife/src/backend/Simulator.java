@@ -89,17 +89,18 @@ public class Simulator extends Thread {
 	public void makeStep(){
 		int[][] newBoard = new int[getWidth()][getHeight()];
 		for (int i=0; i<getWidth();i++){
-		for (int j=0;j<getHeight();j++){
-		int count = count_Cell_Alive(i, j);
-		if (count == 2){
-		newBoard[i][j] = getCell(i, j);
-		} else if (count==3) {
-		newBoard[i][j] = 1;
-		} 
-		}
+			for (int j=0;j<getHeight();j++){
+				int count = count_Cell_Alive(i, j);
+				if (count == 2){
+					newBoard[i][j] = getCell(i, j);
+				} else if (count==3) {
+					newBoard[i][j] = 1;
+				} 
+			}
 		}
 		mainGrid = newBoard;
-		}
+	}
+	
 		/*
 		*Counts the number of alive cells neighboring the cell located in (x, y)
 		*@param x coordinate x horizontal (int)
