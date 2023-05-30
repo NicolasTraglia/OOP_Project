@@ -6,6 +6,6 @@ Object-Oriented Programming project Game of Life.
 Only edit the Simulator.java file.
 
 TODO/ONGOING ISSUES:
-Step method not working as intended, detects dead cells as alive for unknown reasons
+Work on the "to go further"
 
 Contact either collaborators if you encounter any issues.
